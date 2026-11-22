@@ -30,6 +30,12 @@ internal sealed class PersonalDetailsConfiguration : IEntityTypeConfiguration<Pe
         builder.Property(p => p.BankAccountCiphertext).HasMaxLength(512).IsRequired();
         builder.Property(p => p.BankAccountLast4).HasMaxLength(4).IsRequired();
 
+        builder.Property(p => p.AccountHolderFirstName).HasMaxLength(PersonalDetails.NameMaxLength);
+        builder.Property(p => p.AccountHolderLastName).HasMaxLength(PersonalDetails.NameMaxLength);
+        builder.Property(p => p.AccountHolderPersonalIdCiphertext).HasMaxLength(512);
+        builder.Property(p => p.AccountHolderPersonalIdLast4).HasMaxLength(4);
+        builder.Property(p => p.AlternativePhoneNumber).HasMaxLength(PersonalDetails.PhoneMaxLength);
+
         builder.Property(p => p.LegalAddress).HasMaxLength(PersonalDetails.AddressMaxLength).IsRequired();
         builder.Property(p => p.ActualAddress).HasMaxLength(PersonalDetails.AddressMaxLength).IsRequired();
 

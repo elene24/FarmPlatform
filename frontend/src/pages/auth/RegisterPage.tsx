@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from 'react-router'
+import { Link } from 'react-router'
 import { CheckboxField } from '../../components/form/CheckboxField'
 import { FormError } from '../../components/form/FormError'
 import { TextField } from '../../components/form/TextField'
@@ -18,7 +18,6 @@ import { applyServerErrors } from '../../lib/formErrors'
 export function RegisterPage() {
   const { t, i18n } = useTranslation()
   const { setUser } = useAuth()
-  const navigate = useNavigate()
   const [formError, setFormError] = useState<string | null>(null)
 
   const {
@@ -34,9 +33,8 @@ export function RegisterPage() {
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null)
     try {
-      const user = await authApi.register({ ...values, preferredLanguage: i18n.language })
-      setUser(user)
-      void navigate('/register/categories', { replace: true })
+      // GuestOnly redirects to step 2 as soon as the user is signed in.
+      setUser(await authApi.register({ ...values, preferredLanguage: i18n.language }))
     } catch (error) {
       setFormError(
         applyServerErrors(error, setError, ['email', 'phoneNumber', 'password', 'confirmPassword', 'acceptTerms']),

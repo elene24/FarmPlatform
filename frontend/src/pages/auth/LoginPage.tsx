@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { CheckboxField } from '../../components/form/CheckboxField'
 import { FormError } from '../../components/form/FormError'
 import { TextField } from '../../components/form/TextField'
@@ -13,12 +13,10 @@ import { authApi } from '../../features/auth/authApi'
 import { useAuth } from '../../features/auth/authContext'
 import { loginSchema, type LoginValues } from '../../features/auth/validation'
 import { applyServerErrors } from '../../lib/formErrors'
-import { safeReturnTo } from '../../lib/safeReturnTo'
 
 export function LoginPage() {
   const { t } = useTranslation()
   const { setUser } = useAuth()
-  const navigate = useNavigate()
   const [params] = useSearchParams()
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -35,9 +33,8 @@ export function LoginPage() {
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null)
     try {
-      const user = await authApi.login(values.email, values.password, values.rememberMe)
-      setUser(user)
-      void navigate(safeReturnTo(params.get('returnTo')) ?? '/dashboard', { replace: true })
+      // GuestOnly redirects (to ?returnTo or the dashboard) as soon as the user is signed in.
+      setUser(await authApi.login(values.email, values.password, values.rememberMe))
     } catch (error) {
       setFormError(applyServerErrors(error, setError, ['email', 'password']))
     }

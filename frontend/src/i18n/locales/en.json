@@ -107,7 +107,21 @@
     "add_category": "Add a category",
     "account_title": "Account",
     "verified": "confirmed",
-    "not_verified": "not confirmed"
+    "not_verified": "not confirmed",
+    "completion": "Profile completion",
+    "missing": {
+      "email": "Confirm your email",
+      "category": "Choose a registration category",
+      "personal": "Add your personal information",
+      "vehicle": "Add a vehicle",
+      "orchard": "Add an orchard"
+    },
+    "status_active": "Active",
+    "status_inactive": "Turned off",
+    "reactivate": "Reactivate",
+    "register_as": "Register as {{category}}",
+    "no_vehicles": "No vehicles added.",
+    "no_orchards": "No orchards added."
   },
   "errors": {
     "unknown": "Something went wrong. Please try again.",
@@ -125,7 +139,21 @@
       "language_invalid": "Unsupported language",
       "invalid": "Invalid value",
       "invalid_request": "The request is invalid",
-      "failed": "Please check the highlighted fields"
+      "failed": "Please check the highlighted fields",
+      "name_invalid": "Use letters only",
+      "personal_id_invalid": "A personal ID number has 11 digits",
+      "iban_invalid": "This IBAN isn't valid. Check the number (e.g. GE29 NB00 0000 0101 9049 17)",
+      "too_long": "Text is too long",
+      "location_required": "Mark the location on the map",
+      "location_invalid": "Invalid coordinates",
+      "plate_invalid": "Invalid license plate (e.g. AA-123-BB)",
+      "capacity_invalid": "Enter a number from 1 to 60",
+      "legal_status_invalid": "Choose a legal entity status",
+      "company_id_invalid": "A company code has 9 digits",
+      "identification_number_invalid": "Enter a 9-digit company code or an 11-digit personal number",
+      "area_invalid": "Area must be more than 0 (max. 4 decimal places)",
+      "holder_is_self": "That's your own personal ID number. If the account is yours, untick \"This bank account does not belong to me\".",
+      "phone_same_as_primary": "That's your main phone number. Enter a different number or leave it empty."
     },
     "auth": {
       "email_taken": "This email is already registered. Try logging in.",
@@ -140,6 +168,142 @@
     },
     "server": {
       "error": "Server error. Please try again later."
+    },
+    "profile": {
+      "personal_id_taken": "This personal ID number is already registered. If that's you, log in with that account.",
+      "personal_details_required": "Add your personal information",
+      "no_category_selected": "Choose at least one category",
+      "vehicle_required": "Add at least one vehicle",
+      "orchard_required": "Add at least one orchard",
+      "not_registered": "This category isn't active",
+      "conflict": "The data changed at the same time. Please try again."
+    },
+    "vehicle": {
+      "duplicate_plate": "This vehicle is already added",
+      "limit_reached": "At most 10 vehicles",
+      "not_found": "Vehicle not found"
+    },
+    "orchard": {
+      "limit_reached": "At most 50 orchards",
+      "not_found": "Orchard not found"
     }
+  },
+  "wizard": {
+    "title": "Registration",
+    "next": "Next",
+    "back": "Back"
+  },
+  "categories": {
+    "title": "How do you want to register?",
+    "subtitle": "Choose one or more. You can add more later.",
+    "all_registered": "You're already registered in every category.",
+    "picker": "Picker",
+    "picker_text": "I'm looking for seasonal work in orchards.",
+    "driver": "Driver",
+    "driver_text": "I have a vehicle and can transport workers.",
+    "orchard": "Orchard owner",
+    "orchard_text": "I have one or more orchards and need workers.",
+    "registered": "Already registered",
+    "reactivate": "Previously turned off — select to reactivate"
+  },
+  "personal": {
+    "title": "Personal information",
+    "subtitle": "Used for both the Picker and the Driver profile — you only enter it once.",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "personal_id": "Personal ID number",
+    "personal_id_hint": "11 digits, as on your ID card",
+    "iban": "Bank account (IBAN)",
+    "iban_hint": "Payments go to this account. E.g. GE29 NB00 0000 0101 9049 17",
+    "legal_address": "Legal address",
+    "legal_address_hint": "As on your ID card",
+    "same_address": "My residential address is the same",
+    "actual_address": "Residential address",
+    "location": "Where you live, on the map",
+    "not_my_account": "This bank account does not belong to me.",
+    "holder_intro": "Enter the details of the person the account is registered to.",
+    "holder_first_name": "Account holder's first name",
+    "holder_last_name": "Account holder's last name",
+    "holder_personal_id": "Account holder's personal ID number",
+    "alternative_phone": "Alternative phone number (optional)",
+    "alternative_phone_hint": "Another number where you can be reached"
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "subtitle": "Add the vehicle you use to transport workers. You can add more than one.",
+    "vehicle_n": "Vehicle {{n}}",
+    "plate": "License plate",
+    "model": "Make and model",
+    "capacity": "Passenger seats",
+    "capacity_hint": "Not counting the driver, 1 to 60",
+    "add": "Add another vehicle",
+    "remove": "Remove"
+  },
+  "orchards": {
+    "title": "Orchards",
+    "subtitle": "Add your orchard. Each one has its own address and location.",
+    "orchard_n": "Orchard {{n}}",
+    "legal_status": "Legal entity status",
+    "choose": "Choose…",
+    "name": "Orchard or business name",
+    "id_number": "Identification number",
+    "id_hint": "LLC: 9-digit company code; entrepreneur or natural person: 11-digit personal number",
+    "id_hint_company": "9-digit company identification code",
+    "id_hint_personal": "11-digit personal number",
+    "address": "Orchard address",
+    "area": "Area (ha)",
+    "area_hint": "In hectares, e.g. 2.5",
+    "location": "Orchard location on the map",
+    "add": "Add another orchard",
+    "remove": "Remove"
+  },
+  "location": {
+    "selected": "Selected point",
+    "search": "Search for an address",
+    "map_hint": "Search for an address, click the map, or drag the pin.",
+    "loading": "Loading map…",
+    "use_mine": "Use my current location",
+    "manual_notice": "The map isn't available right now. Use your current location or enter coordinates.",
+    "geo_failed": "Couldn't get your location. Allow location access in the browser or enter coordinates.",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "drag_hint": "Drag to the exact spot"
+  },
+  "review": {
+    "title": "Review your information",
+    "subtitle": "Make sure everything is correct. You can edit any section.",
+    "categories": "Categories",
+    "name": "Name",
+    "edit": "Edit",
+    "submit": "Complete registration",
+    "seats_one": "{{count}} seat",
+    "seats_other": "{{count}} seats",
+    "hectares": "{{value}} ha",
+    "existing_personal": "Your saved details will be used: {{name}}",
+    "existing_vehicles_one": "Your {{count}} saved vehicle will be used",
+    "existing_vehicles_other": "Your {{count}} saved vehicles will be used",
+    "existing_orchards_one": "Your {{count}} saved orchard will be used",
+    "existing_orchards_other": "Your {{count}} saved orchards will be used",
+    "privacy": "Your personal ID number and bank account are stored encrypted and are never shown in full.",
+    "account_holder": "Account holder"
+  },
+  "done": {
+    "title": "Registration complete!",
+    "text": "Your profile is saved. You can see and manage it in your dashboard.",
+    "to_dashboard": "Go to dashboard"
+  },
+  "profile": {
+    "title": "My profile",
+    "no_personal": "You haven't added personal information yet. It's entered when you register as a picker or driver.",
+    "shared_note": "Used for both your Picker and Driver profiles.",
+    "edit_note": "Leave the ID number and IBAN fields empty if you don't want to change them.",
+    "keep_hint": "Saved: •••• {{last4}}. Leave empty to keep it.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Your changes have been saved.",
+    "account_owner": "Bank account belongs to",
+    "owner_self": "Me",
+    "owner_other": "Another person",
+    "edit_personal": "Edit personal information"
   }
 }

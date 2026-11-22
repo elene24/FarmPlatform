@@ -6,7 +6,10 @@ Platform connecting fruit pickers, drivers and orchard owners.
   security plumbing (cookies, CSRF, CORS, rate limiting), and the React shell (Georgian by default).
 - **Phase 2:** accounts. Registration, login/logout, email verification, forgot/reset password, session
   handling in the SPA, and protected routes.
-- **Phase 3 (next):** registration categories and the Picker / Driver / Orchard profile forms.
+- **Phase 3:** registration wizard (categories → personal details / vehicles / orchards → review → submit),
+  Google Maps location picker, dashboard category cards, and the profile, vehicle and orchard APIs with
+  ownership checks.
+- **Phase 4 (next):** profile management pages, profile photo (Cloudflare R2), and account settings.
 
 ## Repository layout
 
@@ -198,7 +201,74 @@ For production, set `Email__Provider=Smtp` and the `Email__Smtp__*` variables be
 - **Passwords** need at least 10 characters, with no forced symbols. A password reset signs other sessions out
   within 10 minutes (security-stamp check).
 
-## Phase 3 (next)
+## Phase 3: registration categories and profiles
 
-Category selection (Picker / Driver / Orchard, any combination), the profile forms with Google Maps location
-picking, the review step, dashboard profile cards, and ownership-authorization tests.
+### API (all require sign-in; data is always the signed-in user's own)
+
+| Endpoint | Notes |
+|---|---|
+| `GET  /api/v1/profiles` | Dashboard summary: personal details (masked), each category's status, vehicles, orchards |
+| `POST /api/v1/profiles/registration` | Wizard submit: `{ picker, driver, orchardOwner, personalDetails?, vehicles?, orchards? }`, saved atomically |
+| `POST /api/v1/profiles/picker` \| `/driver` \| `/orchard` | Add one category (same rules) |
+| `GET/PUT /api/v1/personal-details/me` | Shared Picker/Driver details. On PUT, an empty ID or IBAN keeps the stored value |
+| `GET /api/v1/pickers/me`, `/drivers/me`, `/orchard-owners/me` | One category (404 if not registered). `PUT /pickers/me` and `/drivers/me` update personal details |
+| `DELETE /api/v1/pickers/me`, `/drivers/me`, `/orchard-owners/me` | **Deactivates** the category. The account and its data are kept |
+| `GET/POST /api/v1/vehicles`, `PUT/DELETE /api/v1/vehicles/{id}` | Driver's vehicles (max 10, plate unique per driver) |
+| `GET/POST /api/v1/orchards`, `GET/PUT/DELETE /api/v1/orchards/{id}` | Owner's orchards (max 50) |
+
+Another user's vehicle or orchard id answers **404**, never 403, so ids can't be probed.
+Personal ID numbers and IBANs are only ever returned as `…Last4`.
+
+### Validation (Georgia)
+- **Personal ID:** 11 digits.
+- **IBAN:** ISO mod-97 checksum. Georgian IBANs must be `GE` + 2 digits + 2 letters + 16 digits.
+- **Orchard identification number:** LLC → 9-digit company code; individual entrepreneur / natural person →
+  11-digit personal number; other → either.
+- **Vehicles:** passenger seats 1–60; plate 4–10 letters/digits, stored normalized (`aa-123-bb` → `AA123BB`).
+- **Orchards:** area > 0 and ≤ 100,000 ha, up to 4 decimals.
+- **Names:** letters in any script. Addresses are required, max 300 characters.
+
+### Google Maps setup
+1. In Google Cloud, create a project with billing enabled, then enable **Maps JavaScript API**,
+   **Places API (New)** and **Geocoding API**.
+2. Create an API key restricted to **HTTP referrers** (`http://localhost:5173/*`, `https://your-domain/*`) and to
+   those three APIs. Set a daily quota or budget alert.
+3. Optionally create a Map ID (Map Management). `DEMO_MAP_ID` is used in development.
+4. Put them in `frontend/.env.local` (not committed):
+   ```
+   VITE_GOOGLE_MAPS_API_KEY=...
+   VITE_GOOGLE_MAPS_MAP_ID=...
+   ```
+Without a key, location fields fall back to "use my current location" plus manual coordinates, so the forms
+still work.
+
+### Bank account holder and alternative phone (Picker / Driver personal details)
+- **"This bank account does not belong to me."** When ticked, the account holder's first name, last name and
+  personal ID number are required. The holder's ID is encrypted like the user's own and only returned as
+  `accountHolderPersonalIdLast4`. Unlike the user's own ID it is *not* unique, because one person (e.g. a parent)
+  may hold the account for several workers. It can't be the user's own ID number (`validation.holder_is_self`).
+  Unticking clears the stored holder details.
+- **Alternative phone number:** optional, normalized like the main phone (`599 11 22 33` → `+995599112233`). The
+  form rejects it if it's the same as the account's main number.
+- **Editing:** the Profile page (`/profile`) shows these fields and lets users edit them. Leaving the ID number,
+  IBAN or holder's ID empty keeps the stored value.
+- **API:** `PersonalDetailsInput` gained `alternativePhoneNumber`, `bankAccountOwnedByOther`,
+  `accountHolderFirstName`, `accountHolderLastName` and `accountHolderPersonalIdNumber`. The migration is
+  `AddBankAccountHolderAndAlternativePhone`.
+
+### Phase 3 decisions
+- **The wizard keeps its data in memory only**, never in localStorage, because it contains the ID number and
+  IBAN. Moving between steps keeps everything; reloading the page starts the wizard again, after a browser
+  warning.
+- **Personal details are entered once and reused.** When adding a category later, the steps whose data
+  already exists are skipped.
+- **Registration is all-or-nothing:** one request and one database transaction.
+- **Integration tests run on real PostgreSQL.** Each test class gets a throwaway database created from the
+  migrations and dropped afterwards. They use the docker compose database (`127.0.0.1:15432`); override with
+  `FARMPLATFORM_TEST_DB`.
+
+## Phase 4 (next)
+
+Rest of profile management (add/edit/remove vehicles and orchards, deactivate a category with confirmation;
+personal details editing already exists at `/profile`), profile photo upload to Cloudflare R2, and account
+settings (change password, language, phone).

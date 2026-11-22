@@ -36,6 +36,20 @@ public sealed class DriverProfile : RoleProfile
         return vehicle;
     }
 
+    public void UpdateVehicle(Guid vehicleId, string licensePlateNumber, string model, int passengerCapacity)
+    {
+        var vehicle = _vehicles.FirstOrDefault(v => v.Id == vehicleId)
+            ?? throw new DomainException("vehicle.not_found", "Vehicle not found.");
+
+        var normalizedPlate = Vehicle.NormalizePlate(licensePlateNumber);
+        if (_vehicles.Any(v => v.Id != vehicleId && v.LicensePlateNumber == normalizedPlate))
+        {
+            throw new DomainException("vehicle.duplicate_plate", "This vehicle is already registered on your profile.");
+        }
+
+        vehicle.Update(licensePlateNumber, model, passengerCapacity);
+    }
+
     public void RemoveVehicle(Guid vehicleId)
     {
         var vehicle = _vehicles.FirstOrDefault(v => v.Id == vehicleId)

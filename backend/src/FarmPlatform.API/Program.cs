@@ -1,5 +1,6 @@
 using FarmPlatform.Api.Errors;
 using FarmPlatform.Api.Security;
+using FarmPlatform.Application;
 using FarmPlatform.Infrastructure;
 using FarmPlatform.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -20,6 +21,7 @@ if (!builder.Environment.IsDevelopment())
 }
 
 // ---- Layers ----
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // ---- Web / security ----
