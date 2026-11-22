@@ -1,0 +1,21 @@
+# Local development database. Neon runs PostgreSQL 17 in production; keep the major version aligned.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: farmplatform-postgres
+    environment:
+      POSTGRES_DB: farmplatform_dev
+      POSTGRES_USER: farmplatform
+      POSTGRES_PASSWORD: farmplatform_dev_pw # local only - never reuse
+    ports:
+      - "127.0.0.1:15432:5432"  # localhost only; 15432 avoids other local PostgreSQL instances and Windows reserved port ranges
+    volumes:
+      - farmplatform-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U farmplatform -d farmplatform_dev"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  farmplatform-pgdata:

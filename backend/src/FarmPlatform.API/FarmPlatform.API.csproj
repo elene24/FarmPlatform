@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>FarmPlatform.Api</RootNamespace>
+    <UserSecretsId>farmplatform-api-6c1f2b0e</UserSecretsId>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <!-- Needed by `dotnet ef` at design time only; not shipped as a runtime dependency. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FarmPlatform.Application\FarmPlatform.Application.csproj" />
+    <ProjectReference Include="..\FarmPlatform.Infrastructure\FarmPlatform.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

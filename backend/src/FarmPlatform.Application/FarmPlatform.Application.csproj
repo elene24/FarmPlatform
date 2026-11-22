@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <!-- Only for DbSet<T>/LINQ in IAppDbContext; the provider (Npgsql) stays in Infrastructure. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FarmPlatform.Domain\FarmPlatform.Domain.csproj" />
+  </ItemGroup>
+</Project>

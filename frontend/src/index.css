@@ -1,0 +1,41 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/noto-sans-georgian';
+@import 'tailwindcss';
+
+/*
+  Design tokens. One green brand color, one warm fruit accent, stone neutrals.
+  Keep the palette small: everything else should be expressed with these.
+*/
+@theme {
+  --font-sans: 'Inter Variable', 'Noto Sans Georgian Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #f1f7f0;
+  --color-brand-100: #dcebd8;
+  --color-brand-200: #b9d7b2;
+  --color-brand-300: #8dbb84;
+  --color-brand-500: #4a8a52;
+  --color-brand-600: #3a7744;
+  --color-brand-700: #2f6b3a;
+  --color-brand-800: #24522d;
+  --color-brand-900: #1b3d22;
+
+  --color-accent-100: #fdebd8;
+  --color-accent-400: #f0a35e;
+  --color-accent-500: #e8893a;
+  --color-accent-600: #c96f24;
+
+  --radius-control: 0.75rem;
+  --radius-card: 1rem;
+}
+
+@layer base {
+  html {
+    @apply bg-stone-50 text-stone-900 antialiased;
+    /* Georgian text is wider than English; a slightly larger base keeps it readable on phones. */
+    font-size: 16px;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+}
