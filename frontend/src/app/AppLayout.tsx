@@ -10,7 +10,7 @@ const currentYear = new Date().getFullYear()
 
 export function AppLayout() {
   const { t } = useTranslation()
-  const { status, logout } = useAuth()
+  const { status, user, logout } = useAuth()
   const navigate = useNavigate()
 
   // Leave protected pages first; otherwise their guard would redirect to /login when the session clears.
@@ -28,6 +28,11 @@ export function AppLayout() {
             <LanguageSwitcher />
             {status === 'authenticated' ? (
               <>
+                {user?.isAdmin && (
+                  <LinkButton to="/admin" variant="ghost">
+                    {t('nav.admin')}
+                  </LinkButton>
+                )}
                 <LinkButton to="/dashboard" variant="ghost">
                   {t('nav.dashboard')}
                 </LinkButton>

@@ -267,6 +267,77 @@ still work.
   migrations and dropped afterwards. They use the docker compose database (`127.0.0.1:15432`); override with
   `FARMPLATFORM_TEST_DB`.
 
+## Represented people (linked persons)
+
+Some pickers do not use smartphones. Any signed-in user (a "representative") can add them at `/linked`,
+answer for them about picking work, and optionally receive their wages, **but only after the person agrees
+by SMS**. The person never needs an account.
+
+How consent works:
+1. The representative adds the person: name, personal ID number, **the person's own mobile number**,
+   addresses, location, and payment (the person's own IBAN, or "to me", which uses the representative's IBAN).
+   The representative must have saved their own personal details first, so the SMS can name them.
+2. The person gets an SMS with a 6-digit code and a link (`/c/{token}`) that states the scope in plain Georgian.
+3. Consent is given either by telling the representative the code (they type it in) or by tapping
+   "I agree" on the link page. The person can decline, or withdraw later, from the same link.
+4. Changing the phone number, the payment method or the person's IBAN puts consent back to "waiting" and sends
+   a new SMS. Name and address edits keep the consent. Removing a person deletes their data and sends an SMS.
+
+Rules: one person, one profile (a personal ID number can't be both a user and a linked person, or linked twice);
+you can't link yourself or use your own phone numbers; Georgian numbers must be mobile; max 30 people per
+representative; codes expire after 7 days or 5 wrong tries; SMS: 1 per minute (except right after a change)
+and 5 per day per person. Only hashes of codes and link tokens are stored; each new SMS replaces the old link.
+
+### API
+| Method | Path | |
+|---|---|---|
+| GET / POST | `/api/v1/linked-persons` | list / add (sends the consent SMS) |
+| GET / PUT / DELETE | `/api/v1/linked-persons/{id}` | own records only (others get 404) |
+| POST | `/api/v1/linked-persons/{id}/resend-consent` | new code + link |
+| POST | `/api/v1/linked-persons/{id}/confirm` | `{ "code": "123456" }`, rate limited |
+| GET | `/api/v1/consent/{token}` | public, rate limited |
+| POST | `/api/v1/consent/{token}/accept` · `/decline` · `/withdraw` | public, rate limited |
+
+In development, SMS messages are printed to the API console (`Sms:Provider = Log`), like emails.
+
+### Before launch
+- **A real SMS provider is needed** (a Georgian SMS gateway, or an international one such as Twilio). Only
+  `Log` is accepted today; the app refuses other values so it can't silently "send" nothing in production.
+- **SMS consent proves access to the phone, not identity.** That's the usual standard, but for paying wages
+  to someone else it's worth a legal review against Georgia's Law on Personal Data Protection (2023),
+  including how long consent records are kept. The consent text version is stored with every consent.
+- **Answering picking requests for a person** will be wired in with the picking events feature; the
+  consent (`CanBeOfferedWork`) is already in place for it.
+
+## Admin panel
+
+Admins see every account at `/admin` (an "ადმინი" / "Admin" link appears in the header): counts per category,
+lists filtered by **pickers, drivers, orchard owners, linked pickers, admins, or no category**, search by name,
+email, phone or an exact 11-digit personal ID number, and a detail page per account (personal info, vehicles,
+orchards, linked pickers). Personal ID numbers and IBANs are only ever shown as their last 4 digits. The panel is
+read-only.
+
+### Creating an admin
+There is no sign-up or API for this on purpose; it's done on the server:
+1. Register the account on the website as usual and **confirm its email** (open the verification link).
+2. From the `backend` folder, with the database running:
+   ```
+   dotnet run --project src/FarmPlatform.API -- make-admin you@example.ge
+   ```
+   It prints `you@example.ge is now an admin.` Reload the website and the Admin link appears.
+3. To remove: `dotnet run --project src/FarmPlatform.API -- remove-admin you@example.ge`
+
+Granting and removing take effect immediately: every admin request checks the role in the database, not the
+login cookie. On Render, run the same command from the service's Shell (`dotnet FarmPlatform.API.dll make-admin …`).
+
+### API (admin only; others get 403)
+| Method | Path | |
+|---|---|---|
+| GET | `/api/v1/admin/stats` | counts |
+| GET | `/api/v1/admin/users?role=&search=&page=&pageSize=` | role: `all`, `picker`, `driver`, `orchard_owner`, `admin`, `none` |
+| GET | `/api/v1/admin/users/{id}` | one account (each view is logged with the admin's id) |
+| GET | `/api/v1/admin/linked-pickers?status=&search=&page=` | status: `all`, `pending`, `confirmed`, `declined`, `revoked` |
+
 ## Phase 4 (next)
 
 Rest of profile management (add/edit/remove vehicles and orchards, deactivate a category with confirmation;

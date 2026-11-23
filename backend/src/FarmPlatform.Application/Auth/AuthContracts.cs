@@ -25,4 +25,5 @@ public sealed record CurrentUserDto(
     string Email,
     bool EmailConfirmed,
     string? PhoneNumber,
-    string PreferredLanguage);
+    string PreferredLanguage,
+    bool IsAdmin);

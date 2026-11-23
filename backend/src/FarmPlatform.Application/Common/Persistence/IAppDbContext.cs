@@ -1,3 +1,4 @@
+using FarmPlatform.Domain.Linked;
 using FarmPlatform.Domain.Orchards;
 using FarmPlatform.Domain.Profiles;
 using FarmPlatform.Domain.Vehicles;
@@ -19,6 +20,7 @@ public interface IAppDbContext
     DbSet<OrchardOwnerProfile> OrchardOwnerProfiles { get; }
     DbSet<Orchard> Orchards { get; }
     DbSet<LegalEntityStatus> LegalEntityStatuses { get; }
+    DbSet<LinkedPerson> LinkedPersons { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

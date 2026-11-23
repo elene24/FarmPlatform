@@ -11,6 +11,7 @@ public static class SecurityServiceCollectionExtensions
     public const string AuthRateLimitPolicy = "auth";
     public const string CsrfHeaderName = "X-XSRF-TOKEN";
     public const string EmailVerifiedPolicy = "EmailVerified";
+    public const string AdminPolicy = "Admin";
 
     /// <summary>
     /// Cookie authentication (ASP.NET Core Identity), CSRF tokens, CORS and rate limiting.
@@ -65,7 +66,11 @@ public static class SecurityServiceCollectionExtensions
             // For features that must only be used with a confirmed email (Phase 3+).
             .AddPolicy(EmailVerifiedPolicy, policy => policy
                 .RequireAuthenticatedUser()
-                .RequireClaim(Infrastructure.Identity.AppUserClaimsPrincipalFactory.EmailVerifiedClaim, "true"));
+                .RequireClaim(Infrastructure.Identity.AppUserClaimsPrincipalFactory.EmailVerifiedClaim, "true"))
+            .AddPolicy(AdminPolicy, policy => policy
+                .RequireAuthenticatedUser()
+                .AddRequirements(new AdminRequirement()));
+        services.AddScoped<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, AdminRequirementHandler>();
 
         // CSRF: synchronizer token. The SPA calls GET /api/v1/auth/csrf, keeps the token in memory and sends it
         // in X-XSRF-TOKEN on every unsafe request; CsrfValidationFilter checks it against this cookie.

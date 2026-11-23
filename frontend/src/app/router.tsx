@@ -1,5 +1,5 @@
 import { Navigate, createBrowserRouter } from 'react-router'
-import { GuestOnly, RequireAuth } from '../features/auth/RouteGuards'
+import { GuestOnly, RequireAuth, RequireAdmin } from '../features/auth/RouteGuards'
 import { CategoriesStep } from '../features/registration/CategoriesStep'
 import { DoneStep } from '../features/registration/DoneStep'
 import { OrchardsStep } from '../features/registration/OrchardsStep'
@@ -17,6 +17,10 @@ import { LandingPage } from '../pages/LandingPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { PlaceholderPage } from '../pages/PlaceholderPage'
 import { ProfilePage } from '../pages/ProfilePage'
+import { ConsentPage } from '../pages/ConsentPage'
+import { AdminPage } from '../pages/admin/AdminPage'
+import { AdminUserPage } from '../pages/admin/AdminUserPage'
+import { LinkedPersonEditPage } from '../pages/linked/LinkedPersonEditPage'
 import { AppLayout } from './AppLayout'
 
 export const router = createBrowserRouter([
@@ -27,6 +31,8 @@ export const router = createBrowserRouter([
       { path: 'verify-email', element: <VerifyEmailPage /> },
       { path: 'reset-password', element: <ResetPasswordPage /> },
       { path: 'terms', element: <PlaceholderPage name="Terms and conditions" /> },
+      // Public: opened from the consent SMS by a picker without an account.
+      { path: 'c/:token', element: <ConsentPage /> },
 
       // Only for visitors who are not signed in.
       {
@@ -58,7 +64,17 @@ export const router = createBrowserRouter([
             ],
           },
           { path: 'profile', element: <ProfilePage /> },
+          { path: 'linked', element: <Navigate to="/profile#linked" replace /> },
+          { path: 'linked/new', element: <LinkedPersonEditPage /> },
+          { path: 'linked/:id/edit', element: <LinkedPersonEditPage /> },
           { path: 'settings', element: <PlaceholderPage name="Account settings" /> },
+          {
+            element: <RequireAdmin />,
+            children: [
+              { path: 'admin', element: <AdminPage /> },
+              { path: 'admin/users/:id', element: <AdminUserPage /> },
+            ],
+          },
         ],
       },
 

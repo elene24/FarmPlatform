@@ -170,7 +170,7 @@ public static partial class ProfileValidator
         _ => GeorgianIdentifiers.IsCompanyId(value) || GeorgianIdentifiers.IsPersonalNumber(value),
     };
 
-    private static void ValidateName(string? value, string field, List<AppError> errors)
+    internal static void ValidateName(string? value, string field, List<AppError> errors)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -182,7 +182,7 @@ public static partial class ProfileValidator
         }
     }
 
-    private static void ValidateText(string? value, int maxLength, string field, List<AppError> errors)
+    internal static void ValidateText(string? value, int maxLength, string field, List<AppError> errors)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -194,7 +194,7 @@ public static partial class ProfileValidator
         }
     }
 
-    private static void ValidateLocation(decimal? latitude, decimal? longitude, string field, List<AppError> errors)
+    internal static void ValidateLocation(decimal? latitude, decimal? longitude, string field, List<AppError> errors)
     {
         if (latitude is null || longitude is null)
         {

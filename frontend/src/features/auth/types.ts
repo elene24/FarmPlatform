@@ -4,6 +4,8 @@ export interface CurrentUser {
   emailConfirmed: boolean
   phoneNumber: string | null
   preferredLanguage: 'ka' | 'en'
+  /** Can open the admin panel (/admin). */
+  isAdmin: boolean
 }
 
 export interface RegisterInput {

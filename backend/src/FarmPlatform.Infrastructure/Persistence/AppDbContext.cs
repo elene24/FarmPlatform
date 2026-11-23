@@ -1,4 +1,5 @@
 using FarmPlatform.Application.Common.Persistence;
+using FarmPlatform.Domain.Linked;
 using FarmPlatform.Domain.Orchards;
 using FarmPlatform.Domain.Profiles;
 using FarmPlatform.Domain.Vehicles;
@@ -22,6 +23,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<OrchardOwnerProfile> OrchardOwnerProfiles => Set<OrchardOwnerProfile>();
     public DbSet<Orchard> Orchards => Set<Orchard>();
     public DbSet<LegalEntityStatus> LegalEntityStatuses => Set<LegalEntityStatus>();
+    public DbSet<LinkedPerson> LinkedPersons => Set<LinkedPerson>();
 
     /// <summary>
     /// ASP.NET Core Data Protection keys (they encrypt auth cookies and email/password-reset tokens).

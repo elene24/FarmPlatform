@@ -8,7 +8,8 @@
     "register": "Register",
     "language": "Language",
     "dashboard": "Dashboard",
-    "logout": "Log out"
+    "logout": "Log out",
+    "admin": "Admin"
   },
   "landing": {
     "title": "Orchards, pickers and drivers — in one place",
@@ -153,7 +154,8 @@
       "identification_number_invalid": "Enter a 9-digit company code or an 11-digit personal number",
       "area_invalid": "Area must be more than 0 (max. 4 decimal places)",
       "holder_is_self": "That's your own personal ID number. If the account is yours, untick \"This bank account does not belong to me\".",
-      "phone_same_as_primary": "That's your main phone number. Enter a different number or leave it empty."
+      "phone_same_as_primary": "That's your main phone number. Enter a different number or leave it empty.",
+      "phone_not_mobile": "Enter a mobile number (Georgian mobiles start with 5)"
     },
     "auth": {
       "email_taken": "This email is already registered. Try logging in.",
@@ -186,6 +188,26 @@
     "orchard": {
       "limit_reached": "At most 50 orchards",
       "not_found": "Orchard not found"
+    },
+    "linked": {
+      "limit_reached": "You can link at most 30 pickers.",
+      "cannot_link_self": "That is your own personal ID number. Add the picker's details.",
+      "phone_is_representatives": "This is your own phone number. Enter the picker's own phone so they can confirm themselves.",
+      "representative_details_required": "Add your own personal information first so the picker knows who is asking.",
+      "code_invalid": "The code is wrong. Check the SMS and try again.",
+      "code_expired": "The code has expired or was entered wrong too many times. Send a new SMS.",
+      "no_pending_request": "There is no pending request. Send a new SMS.",
+      "already_confirmed": "This picker has already confirmed.",
+      "sms_too_soon": "An SMS was just sent. Wait a minute (at most 5 SMS a day per picker).",
+      "not_found": "This picker was not found.",
+      "consent_not_found": "This link is no longer valid.",
+      "phone_invalid": "Enter a valid mobile number.",
+      "bank_account_required": "Enter the picker's bank account or choose payment to you.",
+      "first_name_required": "This field is required",
+      "last_name_required": "This field is required",
+      "legal_address_required": "This field is required",
+      "actual_address_required": "This field is required",
+      "location_required": "Mark the location on the map"
     }
   },
   "wizard": {
@@ -304,6 +326,129 @@
     "account_owner": "Bank account belongs to",
     "owner_self": "Me",
     "owner_other": "Another person",
-    "edit_personal": "Edit personal information"
+    "edit_personal": "Edit personal information",
+    "add_personal": "Add my information"
+  },
+  "linked": {
+    "title": "Linked pickers",
+    "subtitle": "Pickers without an account. You answer picking requests for them, once they agree by SMS.",
+    "add": "Add linked picker",
+    "add_title": "Add a linked picker",
+    "edit_title": "Edit linked picker",
+    "form_subtitle": "We'll send the picker an SMS asking them to agree. Until they agree, you can't answer for them.",
+    "need_personal": "To link pickers, first add your own personal information — the picker will see your name in the SMS.",
+    "add_my_details": "Add my information",
+    "empty": "You have no linked pickers yet.",
+    "how_1": "Add the picker's details and their own mobile number.",
+    "how_2": "They get an SMS with a code and a link. They tell you the code, or tap the link and agree.",
+    "how_3": "Once they agree, you can answer picking requests for them. They can withdraw at any time from the same link.",
+    "payment": "Payment",
+    "pay_own": "To the picker's own bank account",
+    "pay_own_text": "Wages go directly to the picker.",
+    "pay_me": "To my bank account",
+    "pay_me_text": "Wages are paid to your account (•••• {{last4}}), and you pass them on. The picker must agree to this.",
+    "pay_to_me_short": "to me (•••• {{last4}})",
+    "pay_to_own_short": "own account (•••• {{last4}})",
+    "iban_hint": "The picker's own IBAN, e.g. GE29 NB00 0000 0101 9049 17",
+    "phone": "Picker's mobile number",
+    "phone_hint": "The consent SMS goes to this number. It must be the picker's own phone, not yours.",
+    "location": "Where the picker lives",
+    "consent_box_title": "What the picker will agree to",
+    "consent_box": "{{name}} agrees that {{rep}} may answer picking requests for them. Wages go to their own account.",
+    "consent_box_pay": "{{name}} agrees that {{rep}} may answer picking requests for them and receive their wages.",
+    "consent_box_edit": "Changing the phone number or payment needs a new confirmation; a new SMS is sent.",
+    "save_and_send": "Save and send SMS",
+    "status": {
+      "pending": "Waiting for consent",
+      "confirmed": "Agreed",
+      "declined": "Declined",
+      "revoked": "Withdrawn"
+    },
+    "method": {
+      "code": "by code",
+      "link": "via link"
+    },
+    "confirmed_on": "Agreed on {{date}} ({{method}}). You can answer picking requests for this picker.",
+    "pending_help": "We sent an SMS to {{phone}}. Ask the picker for the 6-digit code, or they can agree via the link in the SMS.",
+    "code_label": "Code from the SMS",
+    "confirm_code": "Confirm",
+    "declined_help": "The picker declined. You can ask again, or remove them.",
+    "revoked_help": "The picker withdrew their consent on {{date}}. You can ask again, or remove them.",
+    "resend": "Send SMS again",
+    "ask_again": "Ask again",
+    "resend_wait": "Wait a minute before sending another SMS",
+    "sms_sent": "SMS sent to {{phone}}.",
+    "remove": "Remove",
+    "remove_yes": "Yes, remove",
+    "remove_confirm": "Remove {{name}}? Their data will be deleted and they'll get an SMS that they are no longer linked to you."
+  },
+  "consent": {
+    "hello": "Hello, {{name}}",
+    "request": "{{rep}} is asking for your permission to act for you on FarmPlatform:",
+    "scope_availability": "Answer for you whether you can take part in fruit picking",
+    "scope_pay_rep": "Receive your wages on their account (•••• {{last4}}) and pass them on to you",
+    "scope_pay_own": "Your wages go to your own account (•••• {{last4}})",
+    "scope_withdraw": "You can withdraw this permission at any time from this page",
+    "agree": "I agree",
+    "decline": "I don't agree",
+    "withdraw": "Withdraw my permission",
+    "agreed": "You agreed. Thank you! You can withdraw at any time.",
+    "declined": "You declined this request.",
+    "withdrawn": "You withdrew your permission.",
+    "not_found_title": "Link not valid",
+    "not_found_text": "This link has expired or was replaced by a newer SMS. Use the link from the most recent SMS.",
+    "footer": "If you don't know this person, tap \"I don't agree\"."
+  },
+  "admin": {
+    "title": "Admin panel",
+    "subtitle": "Everyone registered on the platform, by category. Sensitive numbers are shown only as their last 4 digits.",
+    "stats": {
+      "users": "Accounts",
+      "pickers": "Pickers",
+      "drivers": "Drivers",
+      "orchard_owners": "Orchard owners",
+      "linked": "Linked pickers ({{confirmed}} agreed)"
+    },
+    "views": {
+      "all": "All",
+      "picker": "Pickers",
+      "driver": "Drivers",
+      "orchard_owner": "Orchard owners",
+      "linked": "Linked pickers",
+      "admin": "Admins",
+      "none": "No category"
+    },
+    "search": "Search",
+    "search_placeholder": "Name, email, phone or personal ID",
+    "col": {
+      "name": "Name",
+      "contact": "Contact",
+      "categories": "Categories",
+      "linked": "Linked pickers",
+      "registered": "Registered",
+      "status": "Consent",
+      "linked_by": "Linked by",
+      "payment": "Payment"
+    },
+    "badge": {
+      "admin": "Admin",
+      "disabled": "Disabled"
+    },
+    "no_name": "(no personal info)",
+    "empty": "Nothing found.",
+    "total_one": "{{count}} result",
+    "total_other": "{{count}} results",
+    "page": "Page {{page}} of {{pages}}",
+    "pay_rep": "To the linking user",
+    "pay_own": "Own account",
+    "user_not_found": "Account not found.",
+    "terms_accepted": "Terms accepted",
+    "language": "Language",
+    "no_personal": "No personal information yet.",
+    "vehicles": "Vehicles",
+    "orchards": "Orchards",
+    "ha": "ha",
+    "all_linked": "All linked pickers",
+    "no_linked": "No linked pickers."
   }
 }

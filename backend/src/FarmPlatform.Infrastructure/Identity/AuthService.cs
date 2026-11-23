@@ -54,7 +54,7 @@ public sealed partial class AuthService(
         await SendVerificationEmailAsync(user, cancellationToken);
         await signInManager.SignInAsync(user, isPersistent: true);
 
-        return Result.Success(ToDto(user));
+        return Result.Success(await ToDtoAsync(user));
     }
 
     public async Task<Result<CurrentUserDto>> LoginAsync(LoginCommand command, CancellationToken cancellationToken)
@@ -81,7 +81,7 @@ public sealed partial class AuthService(
         var result = await signInManager.PasswordSignInAsync(user, command.Password!, command.RememberMe, lockoutOnFailure: true);
         if (result.Succeeded)
         {
-            return Result.Success(ToDto(user));
+            return Result.Success(await ToDtoAsync(user));
         }
 
         if (result.IsLockedOut)
@@ -205,7 +205,7 @@ public sealed partial class AuthService(
     public async Task<CurrentUserDto?> GetCurrentUserAsync(Guid userId, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
-        return user is null || !user.IsActive ? null : ToDto(user);
+        return user is null || !user.IsActive ? null : await ToDtoAsync(user);
     }
 
     private async Task SendVerificationEmailAsync(ApplicationUser user, CancellationToken cancellationToken)
@@ -296,8 +296,9 @@ public sealed partial class AuthService(
         return Result.Failure<T>(conflict ? ErrorKind.Conflict : ErrorKind.Validation, [.. mapped.Distinct()]);
     }
 
-    private static CurrentUserDto ToDto(ApplicationUser user) =>
-        new(user.Id, user.Email!, user.EmailConfirmed, user.PhoneNumber, user.PreferredLanguage);
+    private async Task<CurrentUserDto> ToDtoAsync(ApplicationUser user) =>
+        new(user.Id, user.Email!, user.EmailConfirmed, user.PhoneNumber, user.PreferredLanguage,
+            await userManager.IsInRoleAsync(user, Application.Common.Security.AppRoles.Admin));
 
     [LoggerMessage(Level = LogLevel.Information, Message = "User {UserId} registered")]
     private static partial void LogRegistered(ILogger logger, Guid userId);

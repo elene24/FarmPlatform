@@ -1,4 +1,5 @@
 using FarmPlatform.Application.Common.Email;
+using FarmPlatform.Application.Common.Sms;
 using FarmPlatform.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -34,6 +35,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
     /// <summary>Every email the app "sent" during this factory's lifetime.</summary>
     public CapturingEmailSender Emails { get; } = new();
 
+    /// <summary>Every SMS the app "sent" during this factory's lifetime.</summary>
+    public CapturingSmsSender Sms { get; } = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -48,6 +52,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<IEmailSender>();
             services.AddSingleton<IEmailSender>(Emails);
+            services.RemoveAll<ISmsSender>();
+            services.AddSingleton<ISmsSender>(Sms);
         });
     }
 
@@ -74,18 +80,21 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
         return host;
     }
 
+    /// <summary>Stops the app first (it has background work using the database), then drops the throwaway database.</summary>
     public override async ValueTask DisposeAsync()
     {
+        await base.DisposeAsync();
+
+        NpgsqlConnection.ClearAllPools();
+        var options = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(_connectionString).Options;
+        await using var db = new AppDbContext(options);
         try
         {
-            await using var scope = Services.CreateAsyncScope();
-            await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.EnsureDeletedAsync();
+            await db.Database.EnsureDeletedAsync();
         }
-        catch (InvalidOperationException)
+        catch (NpgsqlException)
         {
-            // Host never started (e.g. no database): nothing to clean up.
+            // Database server not reachable: nothing to clean up.
         }
-
-        await base.DisposeAsync();
     }
 }

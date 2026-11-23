@@ -8,8 +8,9 @@ import { Button, LinkButton } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Spinner } from '../components/ui/Spinner'
 import { useAuth } from '../features/auth/authContext'
+import { LinkedPickersSection } from '../features/linked/LinkedPickersSection'
 import { PersonalDetailsFields } from '../features/profiles/PersonalDetailsFields'
-import { personalFormFrom, toPersonalInput } from '../features/profiles/personalForm'
+import { emptyPersonalForm, personalFormFrom, toPersonalInput } from '../features/profiles/personalForm'
 import { profilesApi } from '../features/profiles/profilesApi'
 import type { PersonalDetailsDto } from '../features/profiles/types'
 import { personalSchema, type PersonalForm } from '../features/profiles/validation'
@@ -62,14 +63,17 @@ export function ProfilePage() {
         </LinkButton>
       </div>
 
-      {details === null ? (
+      {details === null && !editing ? (
         <Card>
           <p className="text-stone-600">{t('profile.no_personal')}</p>
-          <LinkButton to="/register/categories" className="mt-4">
-            {t('dashboard.add_category')}
-          </LinkButton>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Button onClick={() => setEditing(true)}>{t('profile.add_personal')}</Button>
+            <LinkButton to="/register/categories" variant="secondary">
+              {t('dashboard.add_category')}
+            </LinkButton>
+          </div>
         </Card>
-      ) : editing ? (
+      ) : editing || details === null ? (
         <EditPersonal
           details={details}
           onCancel={() => setEditing(false)}
@@ -91,6 +95,8 @@ export function ProfilePage() {
           />
         </>
       )}
+
+      {details && <LinkedPickersSection me={details} />}
     </div>
   )
 }
@@ -140,7 +146,7 @@ function ViewPersonal({ details: d, onEdit }: { details: PersonalDetailsDto; onE
 }
 
 function EditPersonal({ details, onCancel, onSaved }: {
-  details: PersonalDetailsDto
+  details: PersonalDetailsDto | null
   onCancel: () => void
   onSaved: (d: PersonalDetailsDto) => void
 }) {
@@ -148,8 +154,13 @@ function EditPersonal({ details, onCancel, onSaved }: {
   const { user } = useAuth()
   const [formError, setFormError] = useState<string | null>(null)
   const schema = useMemo(
-    () => personalSchema({ editing: true, hasStoredHolderId: details.accountHolderPersonalIdLast4 !== null, primaryPhone: user?.phoneNumber }),
-    [details.accountHolderPersonalIdLast4, user?.phoneNumber],
+    () =>
+      personalSchema({
+        editing: details !== null,
+        hasStoredHolderId: details?.accountHolderPersonalIdLast4 != null,
+        primaryPhone: user?.phoneNumber,
+      }),
+    [details, user?.phoneNumber],
   )
 
   const {
@@ -158,7 +169,7 @@ function EditPersonal({ details, onCancel, onSaved }: {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<PersonalForm>({ resolver: zodResolver(schema), defaultValues: personalFormFrom(details) })
+  } = useForm<PersonalForm>({ resolver: zodResolver(schema), defaultValues: details ? personalFormFrom(details) : emptyPersonalForm })
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null)
@@ -177,7 +188,7 @@ function EditPersonal({ details, onCancel, onSaved }: {
         <div className="mb-5">
           <FormError code={formError} />
         </div>
-        <PersonalDetailsFields register={register} control={control} errors={errors} saved={details} />
+        <PersonalDetailsFields register={register} control={control} errors={errors} saved={details ?? undefined} />
         <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button variant="secondary" size="lg" onClick={onCancel} disabled={isSubmitting}>
             {t('profile.cancel')}

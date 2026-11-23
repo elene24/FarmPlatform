@@ -50,6 +50,16 @@ if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("Databas
     await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
 }
 
+// Admin management from the command line (there is no API for it), e.g.
+//   dotnet run --project src/FarmPlatform.API -- make-admin someone@example.ge
+if (args is [var command, var email, ..] && command is "make-admin" or "remove-admin")
+{
+    var (ok, message) = await FarmPlatform.Infrastructure.Identity.AdminAccounts.SetAdminAsync(app.Services, email, grant: command == "make-admin");
+    Console.WriteLine(message);
+    Environment.ExitCode = ok ? 0 : 1;
+    return;
+}
+
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 

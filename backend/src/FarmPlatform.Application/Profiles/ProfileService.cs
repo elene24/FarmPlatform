@@ -345,7 +345,8 @@ public sealed class ProfileService(IAppDbContext db, ISensitiveDataProtector pro
         if (!string.IsNullOrWhiteSpace(input.PersonalIdNumber))
         {
             pin = protector.Protect(input.PersonalIdNumber, SensitiveDataKind.PersonalIdNumber, withBlindIndex: true);
-            var takenByOther = await db.PersonalDetails.AnyAsync(p => p.PersonalIdNumberHash == pin.BlindIndex && p.UserId != userId, cancellationToken);
+            var takenByOther = await db.PersonalDetails.AnyAsync(p => p.PersonalIdNumberHash == pin.BlindIndex && p.UserId != userId, cancellationToken)
+                || await db.LinkedPersons.AnyAsync(l => l.PersonalIdNumberHash == pin.BlindIndex, cancellationToken);
             if (takenByOther)
             {
                 return Result.Failure<PersonalDetails>(ErrorKind.Conflict, new AppError("profile.personal_id_taken", prefix + "personalIdNumber"));

@@ -1,5 +1,7 @@
 using FarmPlatform.Application.Auth;
 using FarmPlatform.Application.Common.Email;
+using FarmPlatform.Application.Common.Links;
+using FarmPlatform.Application.Common.Sms;
 using FarmPlatform.Application.Common.Persistence;
 using FarmPlatform.Application.Common.Security;
 using FarmPlatform.Infrastructure.Email;
@@ -7,6 +9,7 @@ using FarmPlatform.Infrastructure.Identity;
 using FarmPlatform.Infrastructure.Persistence;
 using FarmPlatform.Infrastructure.Persistence.Interceptors;
 using FarmPlatform.Infrastructure.Security;
+using FarmPlatform.Infrastructure.Sms;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +78,16 @@ public static class DependencyInjection
             .Validate(o => Uri.TryCreate(o.BaseUrl, UriKind.Absolute, out _), "Frontend:BaseUrl must be an absolute URL.")
             .ValidateOnStart();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<Application.Admin.IAdminService, Admin.AdminService>();
+        services.AddScoped<IUserDirectory, UserDirectory>();
+        services.AddSingleton<IAppLinks, AppLinks>();
+
+        // ---- SMS (consent requests to linked persons) ----
+        services.AddOptions<SmsOptions>()
+            .Bind(configuration.GetSection(SmsOptions.SectionName))
+            .Validate(o => o.Provider == "Log", "Sms:Provider must be 'Log' (no real SMS provider is configured yet).")
+            .ValidateOnStart();
+        services.AddSingleton<ISmsSender, LoggingSmsSender>();
 
         // ---- Email ----
         services.AddOptions<EmailOptions>()

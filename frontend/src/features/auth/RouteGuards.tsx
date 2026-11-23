@@ -34,3 +34,10 @@ export function GuestOnly() {
   }
   return <Outlet />
 }
+
+/** Admin panel. Non-admins are sent to the dashboard; the API enforces the same rule on every request. */
+export function RequireAdmin() {
+  const { user } = useAuth()
+  if (!user?.isAdmin) return <Navigate to="/dashboard" replace />
+  return <Outlet />
+}
